@@ -5,6 +5,8 @@ var keys = require("./keys.js");
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 var ask = require("inquirer");
+var moment = require('moment');
+var fs = require("fs");
 
 var spotify = new Spotify(keys.spotify);
 var twitter = new Twitter(keys.twitter);
@@ -70,13 +72,16 @@ function doCommand() {
 
 
         }
-        console.log();
+        // console.log();
         
       });
 
 }
 
 function readTweets() {
+
+    var functionName = "readTweets";
+    var time = moment().format('LLLL');
 
     var twitterQuestion = {
 
@@ -106,9 +111,9 @@ function readTweets() {
                 console.log("-------------------------------------------------------------");
             }
     
-            // console.log(JSON.stringify(tweets, null, 2));  // The favorites.
-            // console.log(JSON.stringify(response, null, 2));  // Raw response object.
           });
+
+        log(time, functionName, response.user);
 
     });
 
@@ -128,7 +133,22 @@ function doOtherStuff() {
 
 };
 
-function log(information) {
+function log(timeLog, functionLog, valueLog) {
+
+    var content = "LOG: " +timeLog+ ", Selected option - " +functionLog+ " value used - " +valueLog +"\n";
+
+    fs.appendFile("log.txt", content, function(err) {
+
+        // If an error was experienced we say it.
+        if (err) {
+          console.log(err);
+        }
+      
+        else {;
+        }
+      
+      });
+
 
 }
 

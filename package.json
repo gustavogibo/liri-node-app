@@ -19,7 +19,9 @@
   "homepage": "https://github.com/gustavogibo/liri-node-app#readme",
   "dependencies": {
     "dotenv": "^5.0.1",
+    "fs": "0.0.1-security",
     "inquirer": "^5.2.0",
+    "moment": "^2.22.1",
     "node-spotify-api": "^1.0.7",
     "request": "^2.86.0",
     "twitter": "^1.7.1"
