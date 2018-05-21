@@ -7,6 +7,7 @@ var Spotify = require('node-spotify-api');
 var ask = require("inquirer");
 var moment = require('moment');
 var fs = require("fs");
+var request = require("request");
 
 var spotify = new Spotify(keys.spotify);
 var twitter = new Twitter(keys.twitter);
@@ -127,6 +128,52 @@ function getSongInformation() {
 
 function getMovieInformation() {
 
+    var functionName = "movieInformation";
+    var time = moment().format('LLLL');
+
+    var movieQuestion = {
+
+        type: "input",
+        name: "movieName",
+        message: "Please inform the movie name.",
+        default: function() {
+            return "Mr. Nobody.";
+          }
+    };
+
+    ask.prompt(movieQuestion).then(function(response) {
+
+        var movieNameQuery = convertMovieNameToOmdb(response.movieName);
+
+        request("http://www.omdbapi.com/?t="+movieNameQuery+"&y=&plot=short&apikey=trilogy", function(error, resp, body) {
+
+            // If the request is successful (i.e. if the response status code is 200)
+            if (!error && resp.statusCode === 200) {
+
+                // Parse the body of the site and recover just the imdbRating
+                // (Note: The syntax below for parsing isn't obvious. Just spend a few moments dissecting it).
+                console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+                console.log("Movie title: "+JSON.parse(body).Title);
+                console.log("Released on : "+JSON.parse(body).Released);
+                console.log("IMDB rating: "+JSON.parse(body).Ratings[0].Value);
+                console.log("Rotten Tomatoes rating: "+JSON.parse(body).Ratings[1].Value);
+                console.log("Country: "+JSON.parse(body).Country);
+                console.log("Language: "+JSON.parse(body).Language);
+                console.log("Plot: "+JSON.parse(body).Plot);
+                console.log("Cast: "+JSON.parse(body).Actors);
+                console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+                
+                var time = moment().format('LLLL');
+
+                log(time, functionName, response.movieName);
+                
+            }
+        });
+
+        
+
+    });
+
 };
 
 function doOtherStuff() {
@@ -135,7 +182,7 @@ function doOtherStuff() {
 
 function log(timeLog, functionLog, valueLog) {
 
-    var content = "LOG: " +timeLog+ ", Selected option - " +functionLog+ " value used - " +valueLog +"\n";
+    var content = "LOG: " +timeLog+ ", ||| Selected option - " +functionLog+ " ||| value used - " +valueLog +"\n";
 
     fs.appendFile("log.txt", content, function(err) {
 
@@ -148,6 +195,31 @@ function log(timeLog, functionLog, valueLog) {
         }
       
       });
+
+
+}
+
+function convertMovieNameToOmdb(movieName) {
+
+    var movieArray = movieName.split(" ");
+    var result = "";
+
+    for (let index = 0; index < movieArray.length; index++) {
+        
+        if(index == movieArray.length-1) {
+
+            result += movieArray[index];
+
+        } else {
+
+            result += movieArray[index]+"+";
+
+        }
+        
+    
+    }
+    
+    return result;
 
 
 }
