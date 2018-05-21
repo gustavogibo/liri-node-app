@@ -30,7 +30,7 @@ function doCommand() {
                 "Read Tweets",
                 "Song Information",
                 "Movie Information",
-                "Do other stuff"
+                "Do Other Stuff"
             ],
             validate: function(value) {
                 if(value == "") {
@@ -210,6 +210,38 @@ function getMovieInformation() {
 };
 
 function doOtherStuff() {
+
+    var content = "";
+
+    fs.readFile('random.txt', 'utf8', function (err,data) {
+        if (err) {
+          return console.log(err);
+        }
+        
+        content = data;
+
+        var functionName = "doSomethingElse";
+        var time = moment().format('LLLL');
+
+        spotify.search({ type: 'track', query: content, limit: 1 }, function(err, data) {
+            if (err) {
+                return console.log('Error occurred: ' + err);
+            }
+
+            console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+            console.log("Band: "+data.tracks.items[0].artists[0].name); 
+            console.log("Song Name: "+data.tracks.items[0].name);
+            console.log("Link to the song on Spotify: "+data.tracks.items[0].external_urls.spotify);
+            console.log("Album: "+data.tracks.items[0].album.name);
+            console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+
+            log(time, functionName, content);
+
+        });
+
+    });
+
+    
 
 };
 
