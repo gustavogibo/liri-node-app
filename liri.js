@@ -124,6 +124,39 @@ function readTweets() {
 
 function getSongInformation() {
 
+    var functionName = "songInformation";
+    var time = moment().format('LLLL');
+
+    var songQuestion = {
+
+        type: "input",
+        name: "songName",
+        message: "Please inform the song title.",
+        default: function() {
+            return "The sign";
+          }
+    };
+
+    ask.prompt(songQuestion).then(function(song) {
+
+        spotify.search({ type: 'track', query: song.songName, limit: 1 }, function(err, data) {
+            if (err) {
+              return console.log('Error occurred: ' + err);
+            }
+
+            console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+            console.log("Band: "+data.tracks.items[0].artists[0].name); 
+            console.log("Song Name: "+data.tracks.items[0].name);
+            console.log("Link to the song on Spotify: "+data.tracks.items[0].external_urls.spotify);
+            console.log("Album: "+data.tracks.items[0].album.name);
+            console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+
+            log(time, functionName, song.songName);
+
+          });
+
+    });
+
 };
 
 function getMovieInformation() {
