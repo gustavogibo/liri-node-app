@@ -8,6 +8,7 @@ var ask = require("inquirer");
 var moment = require('moment');
 var fs = require("fs");
 var request = require("request");
+var chalk = require('chalk');
 
 var spotify = new Spotify(keys.spotify);
 var twitter = new Twitter(keys.twitter);
@@ -27,10 +28,10 @@ function doCommand() {
             name:"command",
             message:"How can I help you?",
             choices:[
-                "Read Tweets",
-                "Song Information",
-                "Movie Information",
-                "Do Other Stuff"
+                chalk.blue("Read Tweets"),
+                chalk.green("Song Information"),
+                chalk.yellow("Movie Information"),
+                chalk.red("Do Other Stuff")
             ],
             validate: function(value) {
                 if(value == "") {
@@ -46,25 +47,25 @@ function doCommand() {
 
         switch(inquirerResponse.command) {
 
-            case "Read Tweets":
+            case chalk.blue("Read Tweets"):
 
                 readTweets();
 
                 break;
             
-            case "Song Information":
+            case chalk.green("Song Information"):
 
                 getSongInformation();
 
                 break;
 
-            case "Movie Information":
+            case chalk.yellow("Movie Information"):
 
                 getMovieInformation();
 
                 break;
 
-            case "Do Other Stuff":
+            case chalk.red("Do Other Stuff"):
 
                 doOtherStuff();
 
@@ -88,7 +89,7 @@ function readTweets() {
 
         type: "input",
         name: "user",
-        message: "Please inform the Twitter username to retrieve his/her last 10 tweets.",
+        message: chalk.blue("Please inform the Twitter username to retrieve his/her last 10 tweets."),
         default: function() {
             return "officialjaden";
           }
@@ -96,9 +97,9 @@ function readTweets() {
 
     ask.prompt(twitterQuestion).then(function(response) {
 
-        console.log("*******************************");
-        console.log("Check it out the last 20 tweets from " +response.user+ ".");
-        console.log("*******************************");
+        console.log(chalk.blue("*******************************"));
+        console.log(chalk.bold("Check it out the last 20 tweets from " +response.user+ "."));
+        console.log(chalk.blue("*******************************"));
 
         twitter.get('statuses/user_timeline', {screen_name: response.user, count: 20, exclude_replies: true}, function(error, tweets, response) {
             if(error) throw error;
@@ -106,10 +107,10 @@ function readTweets() {
             for (var key in tweets) {
     
                 // if (key == choice)
-                console.log("-------------------------------------------------------------");
-                console.log(tweets[key].created_at);
-                console.log(tweets[key].text);
-                console.log("-------------------------------------------------------------");
+                // console.log(chalk.bold("-------------------------------------------------------------"));
+                console.log(chalk.blue(tweets[key].created_at));
+                console.log(chalk.blue(tweets[key].text));
+                console.log(chalk.bold("-------------------------------------------------------------"));
             }
     
           });
@@ -144,12 +145,12 @@ function getSongInformation() {
               return console.log('Error occurred: ' + err);
             }
 
-            console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-            console.log("Band: "+data.tracks.items[0].artists[0].name); 
-            console.log("Song Name: "+data.tracks.items[0].name);
-            console.log("Link to the song on Spotify: "+data.tracks.items[0].external_urls.spotify);
-            console.log("Album: "+data.tracks.items[0].album.name);
-            console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+            console.log(chalk.bgGreen("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="));
+            console.log(chalk.green("Band: ")+data.tracks.items[0].artists[0].name); 
+            console.log(chalk.green("Song Name: ")+data.tracks.items[0].name);
+            console.log(chalk.green("Link to the song on Spotify: ")+data.tracks.items[0].external_urls.spotify);
+            console.log(chalk.green("Album: ")+data.tracks.items[0].album.name);
+            console.log(chalk.bgGreen("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="));
 
             log(time, functionName, song.songName);
 
@@ -185,16 +186,16 @@ function getMovieInformation() {
 
                 // Parse the body of the site and recover just the imdbRating
                 // (Note: The syntax below for parsing isn't obvious. Just spend a few moments dissecting it).
-                console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-                console.log("Movie title: "+JSON.parse(body).Title);
-                console.log("Released on : "+JSON.parse(body).Released);
-                console.log("IMDB rating: "+JSON.parse(body).Ratings[0].Value);
-                console.log("Rotten Tomatoes rating: "+JSON.parse(body).Ratings[1].Value);
-                console.log("Country: "+JSON.parse(body).Country);
-                console.log("Language: "+JSON.parse(body).Language);
-                console.log("Plot: "+JSON.parse(body).Plot);
-                console.log("Cast: "+JSON.parse(body).Actors);
-                console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+                console.log(chalk.bgYellow("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="));
+                console.log(chalk.yellow("Movie title: ")+JSON.parse(body).Title);
+                console.log(chalk.yellow("Released on : ")+JSON.parse(body).Released);
+                console.log(chalk.yellow("IMDB rating: ")+JSON.parse(body).Ratings[0].Value);
+                console.log(chalk.yellow("Rotten Tomatoes rating: ")+JSON.parse(body).Ratings[1].Value);
+                console.log(chalk.yellow("Country: ")+JSON.parse(body).Country);
+                console.log(chalk.yellow("Language: ")+JSON.parse(body).Language);
+                console.log(chalk.yellow("Plot: ")+JSON.parse(body).Plot);
+                console.log(chalk.yellow("Cast: ")+JSON.parse(body).Actors);
+                console.log(chalk.bgYellow("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="));
                 
                 var time = moment().format('LLLL');
 
@@ -228,12 +229,12 @@ function doOtherStuff() {
                 return console.log('Error occurred: ' + err);
             }
 
-            console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-            console.log("Band: "+data.tracks.items[0].artists[0].name); 
-            console.log("Song Name: "+data.tracks.items[0].name);
-            console.log("Link to the song on Spotify: "+data.tracks.items[0].external_urls.spotify);
-            console.log("Album: "+data.tracks.items[0].album.name);
-            console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+            console.log(chalk.magenta("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="));
+            console.log(chalk.magenta("Band: "+data.tracks.items[0].artists[0].name)); 
+            console.log(chalk.magenta("Song Name: "+data.tracks.items[0].name));
+            console.log(chalk.magenta("Link to the song on Spotify: "+data.tracks.items[0].external_urls.spotify));
+            console.log(chalk.magenta("Album: "+data.tracks.items[0].album.name));
+            console.log(chalk.magenta("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="));
 
             log(time, functionName, content);
 
